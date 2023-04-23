@@ -2,9 +2,10 @@ const Player = require('./player/implementation')
 
 const bootstrap = async () => {
   const player = new Player()
+  const state = {}
 
   try {
-    await player.createDancercard()
+    state.dancerCardId = await player.createDancercard()
   } catch (error) {
     process.exitCode = -1
 
@@ -12,6 +13,10 @@ const bootstrap = async () => {
       `[error] dancercard creation failed: ${error.message}`
     )
   }
+
+  console.debug(
+    `[debug] dancercard id: ${state.dancerCardId}`
+  )
 
   try {
     await player.connectToRoom()
