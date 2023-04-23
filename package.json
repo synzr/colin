@@ -1,0 +1,19 @@
+{
+  "name": "colin",
+  "version": "0.0.0",
+  "description": "The service that handles Just Dance Now bots to get free coins.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "start:dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "standard --fix"
+  },
+  "keywords": [],
+  "author": "Mikhail \"synzr\" Serebryakov <sora@synzr.ru> [https://synzr.ru]",
+  "license": "MIT",
+  "devDependencies": {
+    "nodemon": "^2.0.22",
+    "standard": "^17.0.0"
+  }
+}
