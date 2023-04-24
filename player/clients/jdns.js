@@ -220,6 +220,30 @@ class JDNS {
       throw error
     }
   }
+
+  /**
+   * Gets a DRS connection information by the room code.
+   *
+   * @param {Number} roomCode Room code.
+   * @returns DRS connection information (such as IP address and port).
+   */
+  async checkRoomController (roomCode) {
+    try {
+      const { data: response } = await this.$axios.get(
+        '/checkRoomController', {
+          params: { roomID: roomCode }
+        }
+      )
+
+      return response
+    } catch (error) {
+      if (error?.response?.status) {
+        throw new Error(`bad response status: ${error.response.status}`)
+      }
+
+      throw error
+    }
+  }
 }
 
 module.exports = JDNS

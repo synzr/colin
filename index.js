@@ -1,5 +1,7 @@
 const Player = require('./player/implementation')
 
+const roomCode = 2440
+
 const bootstrap = async () => {
   const player = new Player()
   const state = {}
@@ -19,10 +21,13 @@ const bootstrap = async () => {
   )
 
   try {
-    await player.connectToRoom()
+    state.connectionEmitter = await player.connectToRoom(
+      roomCode
+    )
   } catch (error) {
     process.exitCode = -1
 
+    console.debug(error)
     return console.error(
       `[error] connection to the room failed: ${error.message}`
     )

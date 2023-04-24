@@ -1,7 +1,9 @@
 const utilities = require('../utilities')
 
-const DRS = require('./clients/drs') // eslint-disable-line no-unused-vars
+const DRS = require('./clients/drs')
 const JDNS = require('./clients/jdns')
+
+const { EventEmitter } = require('events')
 
 const unlockedfirstTimeUserExperienceData = require(
   '../data/unlocked-ftue-data.json'
@@ -19,7 +21,11 @@ class Player {
     this.$clients = {
       drs: null, jdns: new JDNS(environment)
     }
-    this.$state = { currentDancercardId: null }
+    this.$state = {
+      currentDancercardId: null,
+      drsMessageEmitter: null,
+      playerConnectionEmitter: null
+    }
   }
 
   /**
@@ -78,12 +84,38 @@ class Player {
 
   /**
    * Connects to the room.
+   *
    * @param {Number} roomCode Room code of the screen.
+   * @returns {EventEmitter} Message emitter.
    */
   async connectToRoom (roomCode) {
-    throw new Error(
-      'Player.connectToRoom() function is not implemented yet.'
+    if (!this.$state.currentDancercardId) {
+      throw new Error('please create dancercard before calling this method')
+    }
+
+    if (this.$clients.drs && this.$state.drsMessageEmitter) {
+      throw new Error('please disconnect from current room before calling this method')
+    }
+
+    const [
+      { drs: host, port },
+      dancerCard
+    ] = await Promise.all([
+      this.$clients.jdns.checkRoomController(
+        roomCode
+      ),
+      this.$clients.jdns.getDancerCard(
+        this.$state.currentDancercardId
+      )
+    ])
+
+    this.$clients.drs = new DRS(host, port)
+    this.$state.drsMessageEmitter = await this.$clients.drs.connect(
+      dancerCard
     )
+
+    this.$state.playerConnectionEmitter = new EventEmitter()
+    return this.$state.playerConnectionEmitter
   }
 }
 
